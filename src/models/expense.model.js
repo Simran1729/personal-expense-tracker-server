@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
+import {Schema} from "mongoose";
 
 const expenseSchema = new mongoose.Schema({
     item : {type : String, required: true},
     amount : {type : Number, required: true},
-    //add tag id later on
-})
+    tag : {type: Schema.Types.ObjectId, ref: 'Tags'}
+}, {strict: true, timestamps: true})
+
+const expenseModel = mongoose.model('Expense', expenseSchema);
+module.exports = expenseModel;
