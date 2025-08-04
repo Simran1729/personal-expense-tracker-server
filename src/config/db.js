@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
 
-// const connectDb = () => {
-//     mongoose.connect('mongodb://localhost:27017/')
-// }
 
-//todo: add db connection
-//todo : add signup / login/ forgot password/otp logic
-//todo : crud on expense
-// todo : crud on tags
+const connectDb = async () => {
+    const DB_URL = process.env.DB_URL;
+    if(!DB_URL){
+        throw new Error('No db_url found');
+    }else{
+        //this is async function, so awati
+        await mongoose.connect(DB_URL);
+        console.log("connected to db!")
+    }
+};
+
+module.exports = connectDb;
