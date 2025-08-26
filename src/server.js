@@ -9,7 +9,7 @@ const PORT = process.env.PORT;
 connectDb().then(() => {
     console.log("Db Connected!");
     app.listen(PORT, () => {
-        `App listening on port ${PORT}`
+        console.log(`App listening on port ${PORT}`)
     })
 }).catch((err) => {
     console.error('Db Connection Failed', err);

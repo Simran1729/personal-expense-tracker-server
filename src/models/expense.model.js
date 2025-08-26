@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-import {Schema} from "mongoose";
+const {Schema} = require('mongoose');
 
 const expenseSchema = new mongoose.Schema({
     item : {type : String, required: true},

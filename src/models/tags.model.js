@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-import {Schema} from "mongoose";
+const {Schema} = require('mongoose')
 
 const tagsSchema = new mongoose.Schema({
     name : {type: String, required: true},
