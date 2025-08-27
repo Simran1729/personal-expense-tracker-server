@@ -51,7 +51,6 @@ exports.signUp = async(req, res) => {
     }
 }
 
-
 exports.refresh = async(req, res) => {
     const refreshToken = req.cookies.refreshToken;
     if(!refreshToken){
@@ -354,7 +353,6 @@ exports.forgotPassword = async(req, res) => {
     }
 }
 
-
 exports.resetPassword = async(req, res) => {
     try{
         const {token, newPassword} = req.body || {};
@@ -395,77 +393,3 @@ exports.resetPassword = async(req, res) => {
         })
     }
 }
-
-// exports.resetPassword = async (req, res) => {
-//   console.log('[resetPassword] start');
-
-//   try {
-//     const { token, newPassword } = req.body || {};
-//     console.log('[resetPassword] input', {
-//       hasToken: !!token,
-//       tokenLen: token ? token.length : 0,
-//       newPwdLen: newPassword ? newPassword.length : 0
-//     });
-
-//     if (!token || !newPassword) {
-//       console.warn('[resetPassword] missing token or newPassword');
-//       return res.status(400).json({
-//         message: 'Either token or New Password is missing'
-//       });
-//     }
-
-//     let payload;
-//     try {
-//       console.log('[resetPassword] verifying JWT…');
-//       payload = jwt.verify(token, JWT_RESET);
-//       console.log('[resetPassword] jwt verified', {
-//         sub: payload?.sub,
-//         jti: payload?.jti,
-//         iat: payload?.iat,
-//         exp: payload?.exp
-//       });
-//     } catch (e) {
-//       console.warn('[resetPassword] jwt.verify failed', { name: e.name, message: e.message });
-//       return res.status(400).json({ message: 'Invalid or expired reset link.' });
-//     }
-
-//     const { sub, jti } = payload;
-//     console.log('[resetPassword] payload fields check', {
-//       hasSub: !!sub,
-//       hasJti: !!jti,
-//     });
-
-//     if (!sub || !jti) {
-//       console.warn('[resetPassword] invalid payload fields');
-//       return res.status(400).json({ message: 'Invalid or expired reset link.' });
-//     }
-
-//     console.log('[resetPassword] findOneAndDelete reset record', { user_id: sub, jti });
-//     const pr = await PASSWORD_RESET.findOneAndDelete({ user_id: sub, jti });
-//     if (!pr) {
-//       console.warn('[resetPassword] reset record not found (used/expired/invalid)');
-//       return res.status(400).json({ message: 'Invalid or expired reset link.' });
-//     }
-//     console.log('[resetPassword] reset record consumed', { prId: pr?._id?.toString?.() });
-
-//     console.log('[resetPassword] hashing password & updating user…');
-//     const newHash = await hashPassword(newPassword);
-//     const upd = await USER.updateOne(
-//       { _id: sub },
-//       { $set: { password: newHash } }
-//     );
-//     console.log('[resetPassword] update result', {
-//       acknowledged: upd?.acknowledged,
-//       matchedCount: upd?.matchedCount,
-//       modifiedCount: upd?.modifiedCount
-//     });
-
-//     console.log('[resetPassword] success');
-//     return res.status(200).json({ message: 'Password has been reset.' });
-//   } catch (err) {
-//     console.error('[resetPassword] unexpected error', err);
-//     return res.status(500).json({
-//       message: 'Error reseting password'
-//     });
-//   }
-// };
