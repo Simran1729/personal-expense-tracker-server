@@ -5,9 +5,9 @@ const authMiddleware = require('../middlewares/authMiddleware')
 
 router.post('/create-tag', authMiddleware, tagController.createTag);
 
-router.post('/delete-tag', authMiddleware, tagController.deleteTag);
+router.delete('/delete-tag/:id', authMiddleware, tagController.deleteTag);
 
-router.post('/update-tag', authMiddleware, tagController.updateTag);
+router.put('/update-tag/:id', authMiddleware, tagController.updateTag);
 
 router.get('/read-tags', authMiddleware, tagController.readTags)
 

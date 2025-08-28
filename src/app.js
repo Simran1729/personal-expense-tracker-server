@@ -18,7 +18,7 @@ app.use(cors({
 
 
 app.use('/api/auth', authRoutes);
-app.use('api/tags', tagRoutes);
+app.use('/api/tags', tagRoutes);
 
 //error middleware for route not found
 app.use((req, res) =>{
