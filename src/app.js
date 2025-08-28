@@ -5,6 +5,7 @@ const app = express();
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/authRoutes')
+const tagRoutes = require('./routes/tagRoutes')
 
 app.use(express.json());
 app.use(cookieParser());
@@ -17,6 +18,7 @@ app.use(cors({
 
 
 app.use('/api/auth', authRoutes);
+app.use('/api/tags', tagRoutes);
 
 //error middleware for route not found
 app.use((req, res) =>{
