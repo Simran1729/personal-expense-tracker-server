@@ -21,7 +21,7 @@ exports.createTag = async(req, res) => {
         const newTag = await TAG.create({name, description, userId : user.id});
         return res.status(201).json({
             "message" : "Tag created successfully", 
-            tag : newTag
+            "data" : newTag
         })
     }catch(err){
         return res.status(500).json({
@@ -74,7 +74,7 @@ exports.updateTag = async(req, res) => {
 
         return res.json({
             "message" : "Tag updated successfull", 
-            updatedTag
+            "data"  :  updatedTag
         })
     } catch(err){
         return res.status(500).json({
@@ -94,7 +94,7 @@ exports.readTags = async(req, res) => {
         const tags = await TAG.find({userId : user.id});
         return res.status(200).json({
             "message" : "Tags fetched successfully",
-            tags
+            "data" : tags
         })
 
     } catch(err){
