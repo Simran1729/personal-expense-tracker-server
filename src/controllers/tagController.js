@@ -1,4 +1,5 @@
 const TAG = require('../models/tags.model');
+const EXPENSE = require('../models/expense.model')
 const mongoose = require('mongoose');
 
 exports.createTag = async(req, res) => {
@@ -118,6 +119,14 @@ exports.deleteTag = async(req, res) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ message: "Invalid tag id" });
         }
+
+        const expenseCount = await EXPENSE.countDocuments({ tag: id });
+        if (expenseCount > 0) {
+        return res.status(400).json({
+            "message": "Cannot delete tag. Some expenses are still using it."
+        });
+        }
+        
         const deletedTag = await TAG.findOneAndDelete(
             {_id: id, userId: user.id}
         )

@@ -16,17 +16,26 @@ const moneyNumber = z.coerce
                      .positive('Amount must be > 0');
 
 
-const CreateExpenseSchema = z.object({
-    item : nonEmptyTrimmed,
-    amount : moneyNumber,
-    tag : objectIdString,
-})
+const CreateExpenseSchema = z
+ .object({
+        item : nonEmptyTrimmed,
+        amount : moneyNumber,
+        tag : objectIdString,
+    })
 
-const UpdateExpenseSchema = z.object({
-    item : nonEmptyTrimmed,
-    amount : moneyNumber,
-    tag : objectIdString
-})
+const UpdateExpenseSchema = z
+ .object({
+        item : nonEmptyTrimmed.optional(),
+        amount : moneyNumber.optional(),
+        tag : objectIdString.optional()
+    })
+    .refine(
+        (data) => Object.keys(data).length > 0, 
+        {
+            message : "At least one field is required for update",
+            path : []
+        }
+    )
 
 
 //response with parsed.success = false , looks like this : 
