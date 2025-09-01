@@ -14,8 +14,6 @@ const otpSchema = new mongoose.Schema({
     },    
 }, {timestamps: true});
 
-
-
 //creates TTL for otp model - deletes the documents by checking createdAt field and deletes after expireAfterSeconds
 otpSchema.index({createdAt: 1}, {expireAfterSeconds : 300})
 

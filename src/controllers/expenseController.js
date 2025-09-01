@@ -16,11 +16,26 @@ const moneyNumber = z.coerce
                      .positive('Amount must be > 0');
 
 
-const CreateExpenseSchema = z.object({
-    item : nonEmptyTrimmed,
-    amount : moneyNumber,
-    tag : objectIdString,
-})
+const CreateExpenseSchema = z
+ .object({
+        item : nonEmptyTrimmed,
+        amount : moneyNumber,
+        tag : objectIdString,
+    })
+
+const UpdateExpenseSchema = z
+ .object({
+        item : nonEmptyTrimmed.optional(),
+        amount : moneyNumber.optional(),
+        tag : objectIdString.optional()
+    })
+    .refine(
+        (data) => Object.keys(data).length > 0, 
+        {
+            message : "At least one field is required for update",
+            path : []
+        }
+    )
 
 
 //response with parsed.success = false , looks like this : 
@@ -50,7 +65,7 @@ exports.createExpense = async(req, res) => {
     try{
         const parsed = CreateExpenseSchema.safeParse(req.body);
         if(!parsed.success){
-            return zodErrorResponse;
+            return zodErrorResponse(res,parsed);
         }
 
         const userId = req.user.id;
@@ -69,13 +84,82 @@ exports.createExpense = async(req, res) => {
 }
 
 exports.readExpense = async (req, res) => {
-
+    //middleware must have checked the user and attached user.id;  
+    const userId = req.user.id;
+    try{
+        const response = await EXPENSE.find({user: userId}).populate('tag');
+        return res.status(200).json({
+            "message" : "Expenses fetched succesfully",
+            "data" : response
+        })
+    } catch(err){
+        return res.status(500).json({
+            "message" : "Something wrong the server"
+        })
+    }
 }
 
 exports.deleteExpense = async (req, res) => {
+    try{
+        const {id} = req.params;
+        const parsedId = objectIdString.safeParse(id);
+        if(!parsedId.success){
+            return zodErrorResponse(res, parsedId);
+        }
 
+        const userId = req.user.id;
+        await EXPENSE.findOneAndDelete({user: userId, _id : id});
+        return res.status(200).json({
+            "message" : "Expense Deleted Successfully"
+        })
+    }catch(err){
+        return res.status(500).json({
+            "message" : "Internal Server Error"
+        })
+    }
 }
 
 exports.updateExpense = async (req, res) => {
+    try{
+        const {id} = req.params;
+        const parsedId = objectIdString.safeParse(id);
+        if(!parsedId.success){
+            return zodErrorResponse(res, parsedId);
+        }
+        const parsed = UpdateExpenseSchema.safeParse(req.body);
+        if(!parsed.success){
+            return zodErrorResponse(res, parsed);
+        }
 
+        const userId = req.user.id;
+        const allowedFields = ['item', 'tag', 'amount'];
+        const updateData = {};
+
+        allowedFields.forEach((field) => {
+            if(req.body[field] !== undefined){
+                updateData[field] = req.body[field]
+            }
+        })
+
+        if(Object.keys(updateData).length === 0){
+            return res.status(400).json({
+                "message" : "No Valid fields provided for update"
+            })
+        }
+
+        const updateRes= await EXPENSE.findOneAndUpdate(
+            {user: userId, _id: id},
+            {$set: updateData},
+            {new: true, runValidators: true}
+        )
+
+        return res.status(200).json({
+            "message" : "Expense Updated Successfully",
+            "data" : updateRes
+        })
+    } catch(err){
+        return res.status(500).json({
+            "message" : "Internal Server Error"
+        })
+    }
 }
